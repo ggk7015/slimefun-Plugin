@@ -15,6 +15,7 @@
 |---|---|
 | **Release jar (1.703 MB)** | [⬇ Download latest release](https://github.com/ggk7015/slimefun-Plugin/releases/latest) |
 | Sources jar | same release page |
+| Chinese translation patch (optional, zh-CN/zh-TW) | same release page |
 
 Deploy: stop the server → copy the jar to `plugins/Slimefun.jar` → start with the [recommended JVM flags](#server-configuration).
 Verify the download with the [SHA-256 checksum](#integrity--verification) before first boot.
@@ -94,7 +95,7 @@ This project optimizes the **operational footprint** of stock Slimefun. Every it
 | Official build (baseline) | ~2.09 MB | — |
 | + `minimizeJar` (Shade) | 1.764 MB | −15.6% |
 | + PaperLib → stub | 1.732 MB | −1.8% |
-| + `en`-only languages | **1.703 MB** (1,785,972 B) | **−18.5%** |
+| + `en`-only languages | **1.703 MB** (1,785,966 B) | **−18.5%** |
 
 ### 2. Jar contents
 
@@ -158,19 +159,24 @@ This is the section that lets **anyone** check the artifact against the source. 
 
 | File | Size | MD5 | SHA-256 |
 |---|---|---|---|
-| `Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar` | 1,785,972 B | `6BD56055856FE22789AF4957B3ED2B65` | `EA194BF77C1320BCC070B934BE5FCF54CB40D87D732B8A05967C88A38D167C2F` |
-| `Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2-sources.jar` | 983,157 B | `13F01623A302180FF86CD28ACDDE5CB6` | `E5042F928E2BB31139395C6A47068A22311828435DAC2093DE001A2E11B7C389` |
+| `Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar` | 1,785,966 B | `0AF28961FE07A8DDF8AF015644365466` | `C5937F5358466841BA6555A7AFD879E63BE389924FD33A09132F32DDE7CA3ACB` |
+| `Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2-sources.jar` | 983,497 B | `1B2D961289DC9B35202E3A8433B783FB` | `EB027791A4552F4E53C23BCAFAEDC46025244A5C529DA236C4EE4436D4EEF248` |
 
-**Source mapping:** the release jar corresponds exactly to the source tree recorded at commit
-[`4f4aec5d9`](https://github.com/ggk7015/slimefun-Plugin/commit/4f4aec5d9)
-(`git diff 4f4aec5d9 -- src pom.xml` is empty). Commits after that one touch only `README.md` and `docs/`.
+**Source mapping:** the release jar corresponds exactly to the source tree at commit
+[`842f5a57`](https://github.com/ggk7015/slimefun-Plugin/commit/842f5a57),
+tagged **`v1.0.0`** (`git diff v1.0.0 -- src pom.xml LICENSE localization` is empty — later commits touch only `README.md`).
+
+**Byte-for-byte reproducible.** The build is configured with a fixed archive timestamp
+(`project.build.outputTimestamp`), so any clean rebuild of this source must produce an **identical** jar.
+We verified this by building the same source tree twice independently: both produced the exact same
+SHA-256 `C5937F53...`. There is no way to hide anything in a jar that reproduces bit-for-bit from source.
 
 **How to verify the jar matches this source:**
 
 ```bat
-:: 1. rebuild from this exact source
+:: 1. rebuild from this exact source (tag v1.0.0)
 git clone https://github.com/ggk7015/slimefun-Plugin.git
-git checkout 4f4aec5d9
+git checkout v1.0.0
 set MAVEN_OPTS=-Xmx2g
 mvn -Dmaven.test.skip=true clean package
 
@@ -180,11 +186,50 @@ Get-FileHash "target\Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar" -Algorithm SHA
 sha256sum "target/Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar"
 ```
 
-The freshly built jar must match `EA194BF7...` (SHA-256) above. If it does, the released jar was built from this source — nothing hidden.
+The freshly built jar must match `C5937F53...` (SHA-256) above. If it does, the released jar is a bit-for-bit
+replica of the source build — nothing hidden.
 
-**What the repo history proves:** `git log` shows the baseline upstream commit `5374034`, then exactly one code-changing
-commit (`4f4aec5d`, 45 files modified, 7 added, 210 deleted), then README-only commits. Nothing was squashed or rewritten
-post-publication.
+**What the repo history proves:** `git log` shows the baseline upstream commit `5374034`, then exactly two
+code-changing commits — `4f4aec5d` (the slimming) and `842f5a57` (reproducible timestamps + optional Chinese
+translations) — followed by README-only commits. Nothing was squashed or rewritten post-publication.
+
+---
+
+## 🌐 Optional Chinese translations (zh-CN / zh-TW)
+
+This build ships **English only** to keep the jar small. The complete upstream Chinese translation files
+(`zh-CN` + `zh-TW`, 10 files, 63,596 B) are preserved in [`localization/languages/`](localization/languages/)
+and can be added back in either of two ways:
+
+**Method A — inject into an existing jar (no rebuild):**
+
+1. Download `Slimefun-slim-Chinese-patch.zip` from the [release page](https://github.com/ggk7015/slimefun-Plugin/releases/latest)
+   (SHA-256 `6C6307F77128E80D652A7FA88A88172490BB0C1FE6F24DAC6E7BD9B9C2F7E40B`, 29,803 B).
+2. Unzip it next to your jar, then:
+   ```bat
+   jar uf "Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar" languages
+   ```
+   This adds `languages/zh-CN/**` and `languages/zh-TW/**` while keeping `en` intact.
+
+**Method B — rebuild with translations bundled (recommended):**
+
+```bat
+set MAVEN_OPTS=-Xmx2g
+mvn -Dmaven.test.skip=true -Pwith-chinese clean package
+```
+
+The `with-chinese` profile embeds `en` + `zh-CN` + `zh-TW`; the resulting jar is
+**1,815,679 B** (SHA-256 `21A7F6AE61EDA1AC20CB120A01A923379B1C0246FBC6CEAA5611E895EFD51093`).
+This profile build is also byte-for-byte reproducible (verified with two independent builds).
+
+After either method, enable a language on the server by editing `plugins/Slimefun/config.yml`:
+
+```yaml
+options:
+  language: zh-CN   # or zh-TW
+```
+
+The default remains `en`; the Chinese files are optional and change nothing unless selected.
 
 ---
 
@@ -324,7 +369,8 @@ Be very suspicious of anyone claiming MSPT wins for a packaging change without a
 
 **Q: Why only `en`? Doesn't that remove localization?**
 This build targets English servers. Removing 3 other bundled languages (63,616 B) has zero runtime effect on an English
-server. If you need `zh`/`zh-CN`/`zh-TW`, use the official build or add them back with one Maven config line.
+server. If you need `zh-CN`/`zh-TW`, re-add them in two minutes — either the one-command Maven profile
+(`-Pwith-chinese`) or the jar-injection patch — see [Optional Chinese translations](#-optional-chinese-translations-zh-cn--zh-tw).
 
 ---
 
@@ -419,11 +465,29 @@ java -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxMetaspaceSize=192M -XX:MaxDirectMemoryS
 
 | 檔案 | SHA-256 |
 |---|---|
-| 正式 jar | `EA194BF77C1320BCC070B934BE5FCF54CB40D87D732B8A05967C88A38D167C2F` |
-| sources jar | `E5042F928E2BB31139395C6A47068A22311828435DAC2093DE001A2E11B7C389` |
+| 正式 jar | `C5937F5358466841BA6555A7AFD879E63BE389924FD33A09132F32DDE7CA3ACB` |
+| sources jar | `EB027791A4552F4E53C23BCAFAEDC46025244A5C529DA236C4EE4436D4EEF248` |
 
-正式 jar 對應源碼 commit `4f4aec5d`。任何人均可 `git checkout 4f4aec5d && mvn clean package` 重新建置並比對 SHA-256,
-證明發布的 jar 與源碼一致、沒有藏東西。完整上游 8,403 筆 git 歷史皆保留,可隨時比對與官方差異。
+正式 jar 對應源碼 tag **`v1.0.0`**(commit `842f5a57`)。任何人均可
+`git clone && git checkout v1.0.0 && mvn clean package` 重新建置並比對 SHA-256。本專案設定了
+`project.build.outputTimestamp`(固定封存時間戳),使建置**逐位元可重現**:我們以同一源碼獨立建置兩次,
+兩次 SHA-256 完全相同(`C5937F53…`)。能用源碼逐位元複製的 jar,沒有藏東西的空間。完整上游 8,403 筆
+git 歷史皆保留,可隨時比對與官方差異。
+
+### 中文翻譯(zh-CN / zh-TW,選用)
+
+本建置預設只附 `en` 以縮小檔案;上游完整中文翻譯(zh-CN + zh-TW,共 10 檔、63,596 B)已保存於
+`localization/languages/`,可二選一加回:
+
+- **方式 A(免重編,直接注入):** 在 Release 頁下載 `Slimefun-slim-Chinese-patch.zip`
+  (SHA-256 `6C6307F77128E80D652A7FA88A88172490BB0C1FE6F24DAC6E7BD9B9C2F7E40B`),解壓後執行
+  `jar uf "Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar" languages`,`en` 保留、加上 zh-CN/zh-TW。
+- **方式 B(重編,推薦):** `mvn -Dmaven.test.skip=true -Pwith-chinese clean package`
+  → 產出 1,815,679 B 的 jar(SHA-256 `21A7F6AE61EDA1AC20CB120A01A923379B1C0246FBC6CEAA5611E895EFD51093`),
+  內含 en + zh-CN + zh-TW,且同樣可逐位元重現。
+
+啟用方式:於 `plugins/Slimefun/config.yml` 設定 `options.language: zh-CN`(或 `zh-TW`)。預設仍為 `en`,
+不選用即不影響任何行為。
 
 ### 誠實聲明(為何可信)
 
