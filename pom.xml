@@ -28,6 +28,10 @@
         <maven.compiler.testSource>21</maven.compiler.testSource>
         <maven.compiler.testTarget>21</maven.compiler.testTarget>
 
+        <!-- Fixed archive timestamp: makes builds byte-for-byte reproducible.
+             Two clean builds on the same environment produce identical jars (same SHA-256). -->
+        <project.build.outputTimestamp>2026-08-04T02:50:50Z</project.build.outputTimestamp>
+
         <!-- Spigot properties -->
         <paper.version>26.1.2.build.74-stable</paper.version>
         <paper.javadocs>https://hub.spigotmc.org/javadocs/spigot/</paper.javadocs>
@@ -340,9 +344,6 @@
 
                     <!-- Slim build: only bundle the most relevant translations -->
                     <include>languages/en/**/*.yml</include>
-                    <include>languages/zh-CN/**/*.yml</include>
-                    <include>languages/zh-TW/**/*.yml</include>
-                    <include>languages/zh/**/*.yml</include>
                 </includes>
             </resource>
 
@@ -551,4 +552,28 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <!--
+        Optional Maven profile: rebuild the jar WITH Simplified / Traditional Chinese
+        translations bundled. The default build ships en only (smallest jar).
+        Usage:  mvn -Dmaven.test.skip=true clean package -Pwith-chinese
+    -->
+    <profiles>
+        <profile>
+            <id>with-chinese</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>${project.basedir}/localization/languages</directory>
+                        <targetPath>languages</targetPath>
+                        <filtering>false</filtering>
+                        <includes>
+                            <include>zh-CN/**/*.yml</include>
+                            <include>zh-TW/**/*.yml</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 </project>
