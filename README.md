@@ -5,6 +5,19 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Minecraft 1.21.10 / 26.1.2](https://img.shields.io/badge/Minecraft-1.21.10%20%2F%2026.1.2-green.svg)](https://purpurmc.org)
+[![Download](https://img.shields.io/badge/Download-latest_release-brightgreen.svg)](https://github.com/ggk7015/slimefun-Plugin/releases/latest)
+
+---
+
+## 📦 Download & Deploy
+
+| Artifact | Link |
+|---|---|
+| **Release jar (1.703 MB)** | [⬇ Download latest release](https://github.com/ggk7015/slimefun-Plugin/releases/latest) |
+| Sources jar | same release page |
+
+Deploy: stop the server → copy the jar to `plugins/Slimefun.jar` → start with the [recommended JVM flags](#server-configuration).
+Verify the download with the [SHA-256 checksum](#integrity--verification) before first boot.
 
 ---
 
