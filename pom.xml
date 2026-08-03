@@ -29,7 +29,7 @@
         <maven.compiler.testTarget>21</maven.compiler.testTarget>
 
         <!-- Spigot properties -->
-        <paper.version>1.21.1</paper.version>
+        <paper.version>26.1.2.build.74-stable</paper.version>
         <paper.javadocs>https://hub.spigotmc.org/javadocs/spigot/</paper.javadocs>
 
         <!-- Default settings for sonarcloud.io -->
@@ -111,7 +111,7 @@
         <defaultGoal>clean package</defaultGoal>
 
         <!-- The name of the final jar -->
-        <finalName>${project.name} v${project.version}</finalName>
+        <finalName>${project.name} v${project.version}-slim-MC-26.1.2</finalName>
 
         <plugins>
             <plugin>
@@ -197,6 +197,12 @@
                 <version>3.6.0</version>
 
                 <configuration>
+                    <!-- Aggressive slimming: drop every class that is not referenced by the shaded jar.
+                         Slimefun barely reflects on its own classes (only server-side classes via Class.forName),
+                         and dough's protection modules are instantiated via hardcoded constructor calls,
+                         so minimizeJar is safe here. -->
+                    <minimizeJar>true</minimizeJar>
+
                     <!-- Relocate these to avoid clashes and conflicts -->
                     <relocations>
                         <relocation>
@@ -219,6 +225,22 @@
                             <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/*</exclude>
+                                <exclude>META-INF/maven/**</exclude>
+                            </excludes>
+                        </filter>
+                        <!--
+                            The bundled dough.skins classes rely on com.mojang.authlib.GameProfile,
+                            which is final since MC 26.x and breaks classloading (IncompatibleClassChangeError).
+                            They are replaced by our own 26.x-compatible implementations shipped
+                            under io.github.thebusybiscuit.slimefun4.libraries.dough.skins.
+                        -->
+                        <filter>
+                            <artifact>com.github.Slimefun.dough:dough-api</artifact>
+                            <excludes>
+                                <exclude>io/github/bakedlibs/dough/skins/**</exclude>
+                                <!-- The bundled dough MinecraftVersion can not parse the "26.1.2.build.2592-stable" format. -->
+                                <exclude>io/github/bakedlibs/dough/versions/MinecraftVersion.class</exclude>
+                                <exclude>io/github/bakedlibs/dough/versions/UnknownServerVersionException.class</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -316,7 +338,11 @@
                     <include>tags/*.json</include>
                     <include>biome-maps/*.json</include>
 
-                    <include>languages/**/*.yml</include>
+                    <!-- Slim build: only bundle the most relevant translations -->
+                    <include>languages/en/**/*.yml</include>
+                    <include>languages/zh-CN/**/*.yml</include>
+                    <include>languages/zh-TW/**/*.yml</include>
+                    <include>languages/zh/**/*.yml</include>
                 </includes>
             </resource>
 
@@ -361,24 +387,12 @@
             <version>cb22e71335</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.Slimefun.dough</groupId>
-            <artifactId>dough-api</artifactId>
-            <version>cb22e71335</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.8</version>
-            <scope>compile</scope>
-        </dependency>
 
         <!-- Paper -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>${paper.version}-R0.1-SNAPSHOT</version>
+            <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -26,7 +26,6 @@ import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundEffect;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import io.papermc.lib.PaperLib;
 
 public class PressureChamber extends MultiBlockMachine {
 
@@ -43,7 +42,7 @@ public class PressureChamber extends MultiBlockMachine {
     @Override
     public void onInteract(Player p, Block b) {
         Block possibleDispenser = b.getRelative(BlockFace.UP).getRelative(BlockFace.UP);
-        BlockState state = PaperLib.getBlockState(possibleDispenser, false).getState();
+        BlockState state = possibleDispenser.getState();
 
         if (state instanceof Dispenser dispenser) {
             Inventory inv = dispenser.getInventory();

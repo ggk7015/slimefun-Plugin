@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
-import io.papermc.lib.PaperLib;
 
 /**
  * This is an implementation of {@link BlockBreakHandler} which is suited for any {@link SlimefunItem}
@@ -58,12 +57,8 @@ public class VanillaInventoryDropHandler<T extends BlockState & InventoryHolder>
     @ParametersAreNonnullByDefault
     public void onPlayerBreak(BlockBreakEvent e, ItemStack item, List<ItemStack> drops) {
         // Fixes #2906 - Spigot being buggy as always...
-        if (!PaperLib.isPaper()) {
-            return;
-        }
-
         Block b = e.getBlock();
-        BlockState state = PaperLib.getBlockState(b, false).getState();
+        BlockState state = b.getState();
 
         if (blockStateClass.isInstance(state)) {
             T inventoryHolder = blockStateClass.cast(state);

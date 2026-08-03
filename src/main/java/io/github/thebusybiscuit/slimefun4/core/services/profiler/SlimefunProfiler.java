@@ -103,8 +103,18 @@ public class SlimefunProfiler {
 
     /**
      * This method starts the profiling, data from previous runs will be cleared.
+     * Profiling is only performed while at least one {@link PerformanceInspector}
+     * has requested a summary, this avoids the per-tick overhead on every
+     * single ticking block for servers that never use "/sf timings".
      */
     public void start() {
+        if (requests.isEmpty()) {
+            isProfiling = false;
+            queued.set(0);
+            timings.clear();
+            return;
+        }
+
         isProfiling = true;
         queued.set(0);
         timings.clear();
@@ -182,6 +192,11 @@ public class SlimefunProfiler {
 
         if (Slimefun.instance() == null || !Slimefun.instance().isEnabled()) {
             // Slimefun has been disabled
+            return;
+        }
+
+        // No point in finishing the report if nobody requested one
+        if (requests.isEmpty()) {
             return;
         }
 

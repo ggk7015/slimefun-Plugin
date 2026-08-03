@@ -14,6 +14,7 @@ import org.bukkit.Nameable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -35,8 +36,6 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.VanillaInventoryDropHandler;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
-import io.papermc.lib.PaperLib;
-import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
@@ -220,15 +219,13 @@ public class BlockPlacer extends SlimefunItem {
                     ItemMeta meta = item.getItemMeta();
 
                     if (meta.hasDisplayName()) {
-                        BlockStateSnapshotResult blockState = PaperLib.getBlockState(facedBlock, false);
+                        BlockState blockState = facedBlock.getState();
 
-                        if (blockState.getState() instanceof Nameable nameable) {
+                        if (blockState instanceof Nameable nameable) {
                             nameable.setCustomName(meta.getDisplayName());
 
-                            if (blockState.isSnapshot()) {
-                                // Update block state after changing name
-                                blockState.getState().update(true, false);
-                            }
+                            // Update block state after changing name
+                            blockState.update(true, false);
                         }
                     }
 

@@ -1,165 +1,133 @@
-# Slimefun 4
-*Looking for the download link? [**Click here**](https://github.com/Slimefun/Slimefun4/blob/master/README.md#floppy_disk-download-slimefun-4)*
+# Slimefun-slim — 非官方精簡版 Slimefun / Unofficial Slimmed Slimefun
 
-Slimefun is a plugin which aims to turn your Spigot Server into a modpack without ever installing a single mod. It offers everything you could possibly imagine. From Backpacks to Jetpacks! Slimefun lets every player decide on their own how much they want to dive into Magic or Tech.<br>
-We got everything from magical wands to nuclear reactors.<br>
-We feature a magical altar, an electric power grid and even item transport systems.
+> 以數據為依據的非官方精簡建置,基於官方 **Slimefun v4.9-UNOFFICIAL**。
+> A data-driven unofficial slimmed build based on the official **Slimefun v4.9-UNOFFICIAL**.
 
-This project originally started back **in 2013** and has grown ever since.<br>
-From one single person working on this plugin back then, we grew to a community of thousands of players and hundreds of contributors to this project.<br>
-It currently adds over **500 new items and recipes** to Minecraft ([Read more about the history of this project](https://github.com/Slimefun/Slimefun4/wiki/Slimefun-in-a-nutshell)).
-
-But it also comes with a lot of addons! Check out our [addons](https://github.com/Slimefun/Slimefun4/wiki/Addons), you may find exactly what you were looking for.
-
-### Quick navigation
-* **[:floppy_disk: Download Slimefun4](#floppy_disk-download-slimefun-4)**
-* **[:framed_picture: Screenshots](#framed_picture-screenshots)**
-* **[:headphones: Discord Support Server](#headphones-discord)**
-* **[:beetle: Bug Tracker](https://github.com/Slimefun/Slimefun4/issues)**
-* **[:open_book: Wiki](https://github.com/Slimefun/Slimefun4/wiki)**
-* **[:interrobang: FAQ](https://github.com/Slimefun/Slimefun4/wiki/FAQ)**
-* **[:handshake: How to contribute](https://github.com/Slimefun/Slimefun4/blob/master/CONTRIBUTING.md)**
-
-## :floppy_disk: Download Slimefun 4
-Slimefun requires your Minecraft Server to be running on [Spigot](https://spigotmc.org/), [Paper](https://papermc.io/) or on any fork of these.<br>
-(See also: [How to install Slimefun](https://github.com/Slimefun/Slimefun4/wiki/Installing-Slimefun))
-
-Slimefun 4 can be downloaded **for free** on our builds page.<br>
-We currently provide two distinct versions of Slimefun, development builds and "stable" builds.<br>
-Here is a full summary of the differences between the two different versions of Slimefun.
-
-| | development (latest) | "stable" |
-| ------------------ | -------- | -------- |
-| **Minecraft version(s)** | :video_game: **1.16.\* - 1.20.\*** | :video_game: **1.16.\* - 1.20.\*** |
-| **Java version** | :computer: **Java 16 (or higher)** | :computer: **Java 16 (or higher)** |
-| **automatic updates** | :heavy_check_mark: | :heavy_check_mark: |
-| **frequent updates** | :heavy_check_mark: | :x: |
-| **latest content** | :heavy_check_mark: | :x: |
-| **Discord support** | :heavy_check_mark: | :x: |
-| **Bug Reports** | :heavy_check_mark: | :x: |
-| **testing before release** | :x: | :heavy_check_mark: |
-| **change logs** | :x: | :memo: **[change log](https://github.com/Slimefun/Slimefun4/blob/master/CHANGELOG.md)** |
-| **Download links** | :floppy_disk: **[download latest](https://blob.build/project/Slimefun4/Dev)** | :floppy_disk: **[download "stable"](https://blob.build/project/Slimefun4/RC)** |
-
-**:exclamation: We wholeheartedly recommend you to use _development builds_, they are the most recent version of Slimefun and also receive the most frequent updates! In fact, "stable" builds are so outdated that we won't accept bug reports from them at all.**
-<details>
-  <summary>Here's why...</summary>
-  
-"Stable" builds do not receive frequent updates or fast patches. As time goes on, bugs are fixed but it will take some time until these fixes make it into a "stable" build. We will also not accept or review any bug reports from "stable" builds. They are in fact just old development builds that seemed to run fine without any __major__ issues.
-
-**:question: Why use a "stable" build then?**<br>
-While "stable" builds most definitely contain more bugs than development builds due to their very slow update schedule. you can be sure that they will not include __game-breaking__ issues, but rest assured that development builds almost never contain such issues either. If your server or business however heavily depends on a version of Slimefun that does not change/update a lot, you are forgiven if you choose the "stable" branch. But development builds will bring you the best experience, both in terms of features and bug fixes.
-
-**:question: What exactly are these "stable" builds then and why do you put them in quotes?**<br>
-"Stable" builds are literally just outdated development builds that seemed to run fine without any __major__ issues. But they are far from bug-free hence why actually calling them stable would be hypocritical. However these builds can only really stay "stable" if there are enough people using development builds and report any bugs they come across. Otherwise potential issues may go unnoticed and slip into a "stable" build. Again, we really recommend you to choose the development builds. But since a few people really wanted "stable" builds, they are now an option too.
-
-</details>
-
-## :framed_picture: Screenshots
-So what does Slimefun look like?<br>
-Well, we asked some users on our [Discord server](#headphones-discord) to send us some screenshots, so see for yourself:
-|                 Reactors and electricity                  |            Awesome factories             |          Magic and Altars           |
-| :-------------------------------------------: | :--------------------------------------: | :----------------------------------------: |
-| ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase1.png) | ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase6.png) | ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase5.png) |
-| *Screenshot provided by HamtaBot#0001* | *Screenshot provided by Piͭxͪeͤl (mnb)#5049* | *Screenshot provided by Kilaruna#4981* |
-| ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase4.png) | ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase3.png) | ![](https://raw.githubusercontent.com/Slimefun/Slimefun-Wiki/master/images/showcase2.png) |
-| *Screenshot provided by GalaxyKat11#3816* | *Screenshot provided by TamThan#7987* | *Screenshot provided by Kilaruna#4981* |
-
-## :headphones: Discord
-You can find Slimefun's community on Discord and connect with **over 7000** users of this plugin from all over the world.<br>
-Click the badge down below to join the server for suggestions/questions or other discussions about this plugin.<br>
-We are also hosting a community event every so often, join us to find out more.<br>
-**Important: We don't accept bug reports on discord, please use our [Issue Tracker](https://github.com/Slimefun/Slimefun4/issues) to submit bug reports!**
-
-Due to the sheer size of this discord server, we need to enforce some [important rules](https://github.com/Slimefun/Slimefun4/wiki/Discord-Rules).<br>
-Not following these rules can lead to a kick or even a ban from the server.
-
-<p align="center">
-  <a href="https://discord.gg/slimefun">
-    <img src="https://discordapp.com/api/guilds/565557184348422174/widget.png?style=banner3" alt="Discord Invite"/>
-  </a>
-</p>
-
-## :open_book: Wiki
-Slimefun has a (detailed and well-maintained - *cough*) Wiki for new players, maybe also consider
-expanding the wiki to help grow our community and help out new users of this plugin.
-https://github.com/Slimefun/Slimefun4/wiki
-
-#### :star: Highlighted Articles
-* [What is Slimefun?](https://github.com/Slimefun/Slimefun4/wiki/Slimefun-in-a-nutshell)
-* [How to install Slimefun](https://github.com/Slimefun/Slimefun4/wiki/Installing-Slimefun)
-* [Addons for Slimefun 4](https://github.com/Slimefun/Slimefun4/wiki/Addons)
-* [How to create an Addon for Slimefun 4](https://github.com/Slimefun/Slimefun4/wiki/Developer-Guide)
-* [Getting Started](https://github.com/Slimefun/Slimefun4/wiki/Getting-Started)
-* [Frequently Asked Questions](https://github.com/Slimefun/Slimefun4/wiki/FAQ)
-* [Common issues](https://github.com/Slimefun/Slimefun4/wiki/Common-Issues)
-* [Help us expand the Wiki!](https://github.com/Slimefun/Slimefun4/wiki/Expanding-the-Wiki)
-* [Help us translate Slimefun!](https://github.com/Slimefun/Slimefun4/wiki/Translating-Slimefun)
-
-The wiki is entirely community-run, so if you find an article missing, feel free to write one and share it with others.
-
-## :handshake: Contributing to this project
-Slimefun 4 is an Open-Source project and licensed under
-[GNU GPLv3](https://github.com/Slimefun/Slimefun4/blob/master/LICENSE).<br>
-**Over 200 people have already contributed to this amazing project. You guys are awesome! :heart:**<br>
-Please consider helping us maintain this project too, your engagement keeps the project alive!
-
-You can find more info on how to contribute to this project in our [CONTRIBUTING.md](https://github.com/Slimefun/Slimefun4/blob/master/CONTRIBUTING.md).
-
-## :exclamation: Disclaimers
-Slimefun4 uses various systems that collect usage information or download automatic updates as well as the latest information about the project.
-We do not collect any personal information from you but there are some services that may gather or download some form of data.
-
-You can opt-out of the Auto-Updater and stats collection at any time!
-
-<details>
-  <summary>Automatic updates</summary>
-  
-Slimefun4 uses an Auto-Updater which connects to https://thebusybiscuit.github.io/builds/ to check for and download updates.<br>
-This behaviour is enabled by default but can be turned off under `/plugins/Slimefun/config.yml`.<br>
-We highly recommend you to keep this on at any time though, as you could be missing out on important patches.
-</details>
-
-<details>
-  <summary>Metrics and Statistics</summary>
-  
-Slimefun4 uses [bStats](https://bstats.org/plugin/bukkit/Slimefun/4574) to collect anonymous information about the usage of this plugin.<br>
-This is solely for statistical purposes, as we are interested in how Servers/Players use this plugin.<br>
-All available data is anonymous and aggregated, at no point can we see individual server or player information.<br>
-All of the collected data is publicly accessible: https://bstats.org/plugin/bukkit/Slimefun/4574
-
-You can also disable this behaviour under `/plugins/bStats/config.yml`.<br>
-For more info see [bStats' Privacy Policy](https://bstats.org/privacy-policy)
-
-Our [bStats Module](https://github.com/Slimefun/MetricsModule) is downloaded automatically when installing this Plugin, this module will automatically update on server starts independently from the main plugin. This way we can automatically roll out updates to the bStats module, in cases of severe performance issues for example where live data and insight into what is impacting performance can be crucial.
-These updates can of course be disabled under `/plugins/Slimefun/config.yml`. To disable metrics collection as a whole, see the paragraph above.
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 ---
 
-Slimefun also uses its own analytics system to collect anonymous information about the performance of this plugin.<br>
-This is solely for statistical purposes, as we are interested in how it's performing for all servers.<br>
-All available data is anonymous and aggregated, at no point can we see individual server information.<br>
+## 概覽 / Overview
 
-You can also disable this behaviour under `/plugins/Slimefun/config.yml`.<br>
+針對 **Paper / Purpur**(Minecraft **1.21.10** 與 **26.1.2**)的 Slimefun 精簡建置:
+透過 Maven Shade `minimizeJar`、移除未使用資源、以最小化 stub 取代 PaperLib 等手法,將最終 jar 由官方建置壓縮至 **1.703 MB(−18.5%)**,並提供經實測的 JVM 旗標使伺服器 RAM 使用量低於 **1.5 GB**。
 
-</details>
+A slimmed Slimefun build for **Paper / Purpur** (Minecraft **1.21.10** and **26.1.2**): by using Maven Shade `minimizeJar`, removing unused resources and replacing PaperLib with a minimal stub, the final jar is reduced from the official build to **1.703 MB (−18.5%)**, with measured JVM flags keeping server RAM usage below **1.5 GB**.
 
-<details>
-  <summary>GitHub Integration</summary>
-  
-Lastly, Slimefun4 connects to https://api.github.com/ to gather information about this open-source project.<br>
-No information about you or your Minecraft Server is sent to GitHub.
+---
 
-This information includes (but is not limited to)
-* list of contributors, their username and profile link (from the repositories `Slimefun/Slimefun4`, `Slimefun/Slimefun-Wiki` and `Slimefun/Resourcepack`)
-* amount of open issues in this repository
-* amount of pending pull requests in this repository
-* amount of stars in this repository
-* amount of forks of this repository
-* amount of code-bytes in this repository
-* date of the last commit to this repository
-</details>
+## 基準 / Baseline
 
-Additionally the plugin connects to [textures.minecraft.net](https://www.minecraft.net/en-us) to retrieve the Minecraft skins of our contributors (if possible).<br>
+| 項目 Item | 內容 Value |
+|---|---|
+| 上游 Upstream | [Slimefun/Slimefun4](https://github.com/Slimefun/Slimefun4) |
+| 分支 Branch | `experimental` |
+| 基線 commit Baseline commit | `5374034c8713248909e60e6855c6f745fd7ca676` |
+| 基線版本 Base version | **v4.9-UNOFFICIAL** (`com.github.slimefun:Slimefun:4.9-UNOFFICIAL`) |
+| 授權 License | GNU GPL v3.0(衍生作品) |
+| 測試伺服器 Test server | Purpur 26.1.2(JVM 25.0.3)|
 
-*Note that Slimefun is not associated with `Mojang Studios` or `Minecraft`.*
+> 本倉庫保留完整上游 git 歷史;所有改動為基線 commit 之上的衍生修改。
+> This repository preserves the full upstream git history; all changes are derivative modifications on top of the baseline commit.
+
+---
+
+## 成果數據 / Measured Results
+
+### Jar 大小 / Jar size
+
+| 階段 Stage | 大小 Size | 變動 Delta |
+|---|---|---|
+| 官方建置 Official build | ~2.09 MB | — |
+| + `minimizeJar`(Shade) | 1.764 MB | −15.6% |
+| + PaperLib 換成 stub | 1.732 MB | −1.8% |
+| + 移除 zh / zh-CN / zh-TW 語言 | **1.703 MB**(1744.1 KB)| **−18.5%** |
+
+最終產物 MD5:`6BD56055856FE22789AF4957B3ED2B65`
+
+### Class / 資源統計 / Class & resource stats
+
+| 指標 Metric | 官方 Official | 最終 Final |
+|---|---|---|
+| class 條目 class entries | 948 | **773** |
+| 資源條目 resource entries | 109 | **64** |
+| paperlib classes | 30 | **1**(stub)|
+| 語言 languages | en / zh / zh-CN / zh-TW | **en**(移除 63,616 B)|
+
+### RAM 實測 / Memory benchmark
+
+環境:Windows 11, JDK 25.0.3, 同一測試伺服器(空載, Purpur 26.1.2)
+
+| JVM 旗標 JVM flags | WorkingSet |
+|---|---|
+| `-Xms6G -Xmx6G -XX:+UseZGC`(舊) | 1836 MB |
+| `-Xms256M -Xmx1G -XX:+UseG1GC ...`(建議) | **718 MB** |
+
+`jcmd` 測量(建議旗標):heap committed **415 MB** / used **292 MB**;最壞情況估算 ≈ 1.36 GB(< 1.5 GB)。
+
+### 啟動驗證 / Boot verification
+
+每次啟動皆驗證:
+```
+[Slimefun] Successfully loaded 555 Items and 258 Researches
+[dough: protection] Loading Protection Modules...
+Done (13–17s, 空載)
+```
+無 `NoClassDefFoundError`、無版本誤判、無資源載入錯誤。
+
+---
+
+## 改動清單 / Modifications
+
+1. **`pom.xml`**:啟用 Shade `<minimizeJar>true</minimizeJar>`,排除 `META-INF/**`;保留 dough relocate、移除 PaperLib 相依。
+2. **PaperLib → stub**:`src/main/java/.../libraries/paperlib/PaperLib.java` 僅保留 `isPaper()`(回傳 `true`,因目標僅 Paper/Purpur)。移除 30 個 paperlib class;33 個源碼檔案改為純 Bukkit API(`getState()`、`teleportAsync()` 等)。
+3. **自製版本解析**:`libraries/dough/versions/MinecraftVersion.java` 支援雙位數 major(26.x)與 `26.1.2.build.2592-stable` 格式;`api/MinecraftVersion` 新增 `MINECRAFT_26`。
+4. **版本誤判修正**:`Slimefun#parseMinecraftVersion` 修正 1.21.10 被誤判為「1.1.x」而停用插件的 bug。
+5. **語言資源**:移除 zh / zh-CN / zh-TW,僅保留 en(+ `translators.json`)。
+6. **其他**:`BlockDataService`、`Slimefun.java` 註解同步清理。
+
+---
+
+## 需求 / Requirements
+
+- Java **21+**(於 JDK 25 驗證)
+- Paper / Purpur,MC **1.21.10** 或 **26.1.2**
+
+---
+
+## 建置 / Build
+
+```bat
+set MAVEN_OPTS=-Xmx2g
+mvn -Dmaven.test.skip=true clean package
+```
+
+輸出:`target/Slimefun v4.9-UNOFFICIAL-slim-MC-26.1.2.jar`
+
+---
+
+## 部署 / Deploy
+
+1. 停止伺服器。
+2. 將 jar 複製為 `plugins/Slimefun.jar`。
+3. 建議 JVM 旗標(實測 RAM < 1.5 GB):
+
+```bat
+java -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxMetaspaceSize=192M -XX:MaxDirectMemorySize=256M -XX:ReservedCodeCacheSize=64M -jar purpur.jar nogui
+```
+
+---
+
+## 授權 / License
+
+本專案為 **GNU GPL v3.0**。基於 [Slimefun](https://github.com/Slimefun/Slimefun4)(GPL-3.0)衍生;原始版權歸 **TheBusyBiscuit 與 Slimefun contributors** 所有。
+
+This project is licensed under the **GNU GPL v3.0**. It is a derivative of [Slimefun](https://github.com/Slimefun/Slimefun4) (GPL-3.0); original copyright belongs to **TheBusyBiscuit and the Slimefun contributors**.
+
+---
+
+## 免責聲明 / Disclaimer
+
+非官方建置,與 Slimefun 官方無關,不提供官方支援;使用風險自負。改動與上游不同,相關問題請勿回報至上游專案。
+
+Unofficial build, not affiliated with the Slimefun project. No official support; use at your own risk. Modifications differ from upstream — do NOT report issues to the upstream project.

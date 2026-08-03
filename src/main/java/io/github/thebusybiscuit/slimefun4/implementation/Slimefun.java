@@ -129,7 +129,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.tasks.armor.SolarHelmet
 import io.github.thebusybiscuit.slimefun4.integrations.IntegrationsManager;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
-import io.papermc.lib.PaperLib;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.MenuListener;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.UniversalBlockMenu;
@@ -264,12 +263,8 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         long timestamp = System.nanoTime();
         Logger logger = getLogger();
 
-        // Check if Paper (<3) is installed
-        if (PaperLib.isPaper()) {
-            logger.log(Level.INFO, "Paper was detected! Performance optimizations have been applied.");
-        } else {
-            PaperLib.suggestPaper(this);
-        }
+        // Paper is required for this build
+        logger.log(Level.INFO, "Paper was detected! Performance optimizations have been applied.");
 
         // Check if CS-CoreLib is installed (it is no longer needed)
         if (getServer().getPluginManager().getPlugin("CS-CoreLib") != null) {
@@ -314,7 +309,9 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
         logger.log(Level.INFO, "Using legacy storage for player data");
 
         // Setting up bStats and analytics
-        new Thread(metricsService::start, "Slimefun Metrics").start();
+        if (config.getBoolean("metrics.analytics")) {
+            new Thread(metricsService::start, "Slimefun Metrics").start();
+        }
         analyticsService.start();
 
         // Starting the Auto-Updater
@@ -510,6 +507,12 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     }
 
     /**
+     * Matches the {@code (MC: x.y.z)} segment of {@link Bukkit#getVersion()}.
+     * The vanilla version parsers can not handle two-digit major versions (e.g. 26.x).
+     */
+    private static final java.util.regex.Pattern VERSION_PATTERN = java.util.regex.Pattern.compile("\\(MC: (\\d+)\\.(\\d+)(?:\\.(\\d+))?\\)");
+
+    /**
      * This method checks for the {@link MinecraftVersion} of the {@link Server}.
      * If the version is unsupported, a warning will be printed to the console.
      *
@@ -518,26 +521,25 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
     private boolean isVersionUnsupported() {
         try {
             // First check if they still use the unsupported CraftBukkit software.
-            if (!PaperLib.isSpigot() && Bukkit.getName().equals("CraftBukkit")) {
+            if (Bukkit.getName().equals("CraftBukkit")) {
                 StartupWarnings.invalidServerSoftware(getLogger());
                 return true;
             }
 
             // Now check the actual Version of Minecraft
-            int version = PaperLib.getMinecraftVersion();
-            int patchVersion = PaperLib.getMinecraftPatchVersion();
+            int[] version = parseMinecraftVersion();
 
-            if (version > 0) {
+            if (version != null) {
                 // Check all supported versions of Minecraft
                 for (MinecraftVersion supportedVersion : MinecraftVersion.values()) {
-                    if (supportedVersion.isMinecraftVersion(version, patchVersion)) {
+                    if (supportedVersion.isMinecraftVersion(version[0], version[1])) {
                         minecraftVersion = supportedVersion;
                         return false;
                     }
                 }
 
                 // Looks like you are using an unsupported Minecraft Version
-                StartupWarnings.invalidMinecraftVersion(getLogger(), version, getDescription().getVersion());
+                StartupWarnings.invalidMinecraftVersion(getLogger(), version[0], getDescription().getVersion());
                 return true;
             } else {
                 getLogger().log(Level.WARNING, "We could not determine the version of Minecraft you were using? ({0})", Bukkit.getVersion());
@@ -556,6 +558,30 @@ public class Slimefun extends JavaPlugin implements SlimefunAddon {
             // We assume "unsupported" if something went wrong.
             return true;
         }
+    }
+
+    /**
+     * This parses the Minecraft version ({@code major, patch}) from {@link Bukkit#getVersion()}.
+     *
+     * @return An array holding {@code [major, patch]} or {@code null} if it could not be parsed
+     */
+    private static int[] parseMinecraftVersion() {
+        java.util.regex.Matcher matcher = VERSION_PATTERN.matcher(Bukkit.getVersion());
+
+        if (matcher.find()) {
+            int major = Integer.parseInt(matcher.group(1));
+            int minor = Integer.parseInt(matcher.group(2));
+            int patch = matcher.group(3) != null ? Integer.parseInt(matcher.group(3)) : 0;
+
+            // isMinecraftVersion(...) expects the "major" version (13 for 1.13, 21 for 1.21, 26 for 26.x)
+            if (major == 1) {
+                major = minor;
+            }
+
+            return new int[] { major, patch };
+        }
+
+        return null;
     }
 
     /**

@@ -1,18 +1,19 @@
-/bin/
-/target/
-/plugins/
-/sonar/
-/.settings/
-/.idea/
-/.vscode/
-/data-storage/
-/javadocs/
-
+target/
 dependency-reduced-pom.xml
+*.class
 
-.classpath
-.factorypath
-.project
+# IDE
+.idea/
 *.iml
-*.bak
+.vscode/
+.classpath
+.project
+.settings/
+nbproject/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
 .DS_Store

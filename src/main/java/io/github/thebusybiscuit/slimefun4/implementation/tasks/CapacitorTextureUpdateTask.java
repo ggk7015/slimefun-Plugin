@@ -12,7 +12,6 @@ import io.github.bakedlibs.dough.skins.PlayerHead;
 import io.github.bakedlibs.dough.skins.PlayerSkin;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.Capacitor;
 import io.github.thebusybiscuit.slimefun4.utils.HeadTexture;
-import io.papermc.lib.PaperLib;
 
 /**
  * This task is run whenever a {@link Capacitor} needs to update their texture.
@@ -78,7 +77,7 @@ public class CapacitorTextureUpdateTask implements Runnable {
         PlayerSkin skin = PlayerSkin.fromHashCode(texture.getUniqueId(), texture.getTexture());
         PlayerHead.setSkin(b, skin, false);
 
-        PaperLib.getBlockState(b, false).getState().update(true, false);
+        b.getState().update(true, false);
     }
 
 }

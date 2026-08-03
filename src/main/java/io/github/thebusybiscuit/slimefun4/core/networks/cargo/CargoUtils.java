@@ -23,7 +23,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
-import io.papermc.lib.PaperLib;
 
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -128,7 +127,7 @@ final class CargoUtils {
                     return withdrawFromVanillaInventory(network, node, template, inventory);
                 }
 
-                BlockState state = PaperLib.getBlockState(target, false).getState();
+                BlockState state = target.getState();
 
                 if (state instanceof InventoryHolder inventoryHolder) {
                     inventory = inventoryHolder.getInventory();
@@ -213,7 +212,7 @@ final class CargoUtils {
                 return withdrawFromVanillaInventory(network, node, inventory);
             }
 
-            BlockState state = PaperLib.getBlockState(target, false).getState();
+            BlockState state = target.getState();
 
             if (state instanceof InventoryHolder inventoryHolder) {
                 inventory = inventoryHolder.getInventory();
@@ -261,7 +260,7 @@ final class CargoUtils {
                     return insertIntoVanillaInventory(stack, wrapper, smartFill, inventory);
                 }
 
-                BlockState state = PaperLib.getBlockState(target, false).getState();
+                BlockState state = target.getState();
 
                 if (state instanceof InventoryHolder inventoryHolder) {
                     inventory = inventoryHolder.getInventory();

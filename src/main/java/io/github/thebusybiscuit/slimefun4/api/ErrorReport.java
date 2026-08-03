@@ -24,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetProvider;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.papermc.lib.PaperLib;
 
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
@@ -176,7 +175,7 @@ public class ErrorReport<T extends Throwable> {
             stream.println("  Java Version: " + System.getProperty("java.version"));
             stream.println();
 
-            String serverSoftware = PaperLib.isSpigot() && !PaperLib.isPaper() ? "Spigot" : Bukkit.getName();
+            String serverSoftware = Bukkit.getName();
             stream.println("Server Software: " + serverSoftware);
             stream.println("  Build: " + Bukkit.getVersion());
             stream.println("  Minecraft v" + Bukkit.getBukkitVersion());
