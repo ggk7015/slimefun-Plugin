@@ -40,6 +40,20 @@ The jar still runs **all 555 items, 258 researches**, and every subsystem of sto
 
 ---
 
+## ⚡ What this build actually improves
+
+This project optimizes the **operational footprint** of stock Slimefun. Every item below is measured — nothing is aspirational:
+
+- **Jar size −18.5%** (~2.09 MB → 1.703 MB). Fewer class/resource entries means less disk I/O at startup and a faster download for admins.
+- **Server memory −61%** (1836 MB → **718 MB** Working Set). Heap, metaspace and code cache are capped instead of pre-committed, so the JVM only uses what the plugin needs.
+- **Same features, verified boot.** All 555 items and 258 researches load; Slimefun initializes in ~2 s on a fresh world, no missing-class or resource errors.
+- **Fix: 1.21.10 version misdetection.** Stock builds parse `1.21.10` as `1.1.x` and silently disable the plugin; this build detects it correctly (see [Modifications](#modifications-vs-upstream)).
+- **English-only resources.** One language set instead of four — smaller jar, fewer files, identical behavior for English servers.
+
+> ⚠️ **Scope:** this is a *packaging and memory* optimization of stock Slimefun, not a rewrite of its hot paths (Cargo/Energy tickers, item factories, etc.). This project does **not** claim MSPT or allocation-rate gains over upstream — no profiler comparison was performed, and we do not publish numbers we did not measure.
+
+---
+
 ## Baseline
 
 | Item | Value |
@@ -95,8 +109,22 @@ Measured on the same machine, same world, same server — only the JVM flags dif
 | `-Xms6G -Xmx6G -XX:+UseZGC ...` (official-style) | 1836 MB |
 | `-Xms256M -Xmx1G -XX:+UseG1GC ...` (**recommended**) | **718 MB** |
 
-`jcmd` heap inspection (recommended flags): **committed 415 MB / used 292 MB**.
-Worst-case footprint estimate for this build is **≈ 1.36 GB**, i.e. comfortably under **1.5 GB** — a small VPS can host it.
+Both runs were repeated independently after this document was finalized (including with the exact release jar) and reproduced the same profile:
+
+| Run | Working Set | Private bytes |
+|---|---|---|
+| Initial benchmark | 718 MB | 752 MB |
+| Independent re-run (release jar) | 715 MB | 749 MB |
+
+**Heap summary** (`jcmd <pid> GC.heap_info`, recommended flags, 60 s after `Done`):
+
+| Region | Reserved | Committed | Used |
+|---|---|---|---|
+| G1 heap | 1024 MB | **405 MB** | **278 MB** |
+| Metaspace | 288 MB | 144 MB | **143 MB** (21 MB class space) |
+| Reserved code cache | 64 MB | — | — |
+
+Worst-case footprint estimate for this build is **≈ 1.36 GB**, comfortably under **1.5 GB** — a small VPS can host it.
 
 ### 4. Boot verification
 
@@ -109,7 +137,8 @@ Every boot is verified against a fresh world (`world` created at first start):
 Done (13.988s)! For help, type "help"
 ```
 
-`Slimefun has finished loading in 1.76s`. No `NoClassDefFoundError`, no version-misdetection errors, no resource-loading failures.
+`Slimefun has finished loading in ~2 s` (reference boot 1.76 s, independent re-run 1.99 s; server `Done` at 13.9–16.8 s depending on run).
+No `NoClassDefFoundError`, no version-misdetection errors, no resource-loading failures.
 
 ---
 
@@ -220,10 +249,11 @@ java -Xms256M -Xmx1G -XX:+UseG1GC -XX:MaxMetaspaceSize=192M -XX:MaxDirectMemoryS
 
 ---
 
-## License
+## 📄 License & Credits
 
-This project is licensed under the **GNU GPL v3.0**. It is a derivative of [Slimefun](https://github.com/Slimefun/Slimefun4)
-(GPL-3.0); the original copyright belongs to **TheBusyBiscuit and the Slimefun contributors**.
+- This project is a derivative re-build of [Slimefun/Slimefun4](https://github.com/Slimefun/Slimefun4) and is released under the **GNU General Public License v3.0** — see [LICENSE](LICENSE) for the full text.
+- Original copyright belongs to **TheBusyBiscuit and the Slimefun contributors**. The complete upstream history, commit messages and authorship are preserved in this repository's git history.
+- Special thanks to **The Slimefun Team** and the entire Slimefun community for building and maintaining the project this work is based on.
 
 ---
 
