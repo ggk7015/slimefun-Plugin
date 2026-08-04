@@ -28,8 +28,16 @@ are applied at build time. No source fork.
 
 ### Removed
 - Direct edits of upstream sources (they live as patches now).
-- `docs/benchmarks` + `docs/images/benchmark` are kept **locally only**
-  (git-ignored) — benchmark data stays out of the repository.
+
+### Added (benchmark / docs)
+- `docs/benchmarks/memory-benchmark.md` + `memory-benchmark-results.md` — Rev 3
+  memory report at identical `-Xmx8000M`: **−32.7% RSS (−613 MB)** and **−73% boot
+  time** vs the old fork; CSV/JSON raw data under `docs/benchmarks/data/`.
+- `docs/images/benchmark/memory-*.png` — charts (working set, boot time, cgroup).
+- `patches/0003-cargo-tick-query-optimization.patch` — cached CargoNet
+  frequency/round-robin/smart-fill lookups (no per-node-per-tick BlockStorage
+  queries, no behaviour change).
+- Benchmark data is now committed (was git-ignored).
 
 ### Notes
 - Upstream unit tests cannot compile/run against Paper API 26 (stale MockBukkit

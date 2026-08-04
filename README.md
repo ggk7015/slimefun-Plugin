@@ -31,10 +31,11 @@ diverges. With build-time weaving:
 
 ## Why this exists
 
-The old `main` branch of this repository was a manual fork of Slimefun that
+The original `main` branch of this repository was a manual fork of Slimefun that
 added MC 26 support by editing upstream sources directly. That work is preserved
-in `main` / tag `v1.0.0`. This `weaving` branch rebuilds the same functionality
-without touching upstream code.
+in tag `v1.0.0`. This project (now on `main`, developed on `weaving`) rebuilds
+the same functionality **without touching upstream code** — everything is applied
+at build time.
 
 ---
 
