@@ -57,7 +57,6 @@ jobs:
           name: slimefun-${{ env.UPSTREAM }}-${{ env.BUILD_DATE }}
           path: |
             dist/*.jar
-            dist/*.jar.sha256
           if-no-files-found: error
 
   release:
@@ -76,7 +75,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="ci-${{ github.run_number }}"
-          gh release create "$TAG" dist/*/*.jar dist/*/*.sha256 \
+          gh release create "$TAG" dist/*/*.jar \
             --generate-notes \
             --title "Slimefun woven build #${{ github.run_number }}" \
             --latest=false
