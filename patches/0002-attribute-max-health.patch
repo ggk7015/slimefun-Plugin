@@ -1,0 +1,52 @@
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Bandage.java b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Bandage.java
+index b87882cf6..f315a0df8 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Bandage.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Bandage.java
+@@ -42,7 +42,7 @@ public class Bandage extends SimpleSlimefunItem<ItemUseHandler> {
+             Player p = e.getPlayer();
+ 
+             // Player is neither burning nor injured
+-            if (p.getFireTicks() <= 0 && p.getHealth() >= p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
++            if (p.getFireTicks() <= 0 && p.getHealth() >= p.getAttribute(Attribute.MAX_HEALTH).getValue()) {
+                 return;
+             }
+ 
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/MedicalSupply.java b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/MedicalSupply.java
+index 350376eab..284292f85 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/MedicalSupply.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/MedicalSupply.java
+@@ -73,7 +73,7 @@ public abstract class MedicalSupply<T extends ItemHandler> extends SimpleSlimefu
+      */
+     public void heal(@Nonnull LivingEntity n) {
+         double health = n.getHealth() + healAmount;
+-        double maxHealth = n.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
++        double maxHealth = n.getAttribute(Attribute.MAX_HEALTH).getValue();
+         n.setHealth(Math.min(health, maxHealth));
+     }
+ 
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Splint.java b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Splint.java
+index 0a510ff28..b85db3af7 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Splint.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/medical/Splint.java
+@@ -31,7 +31,7 @@ public class Splint extends SimpleSlimefunItem<ItemUseHandler> {
+             Player p = e.getPlayer();
+ 
+             // Player is neither burning nor injured
+-            if (p.getFireTicks() <= 0 && p.getHealth() >= p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
++            if (p.getFireTicks() <= 0 && p.getHealth() >= p.getAttribute(Attribute.MAX_HEALTH).getValue()) {
+                 return;
+             }
+ 
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/weapons/VampireBlade.java b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/weapons/VampireBlade.java
+index 006db130e..43ce84dfd 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/weapons/VampireBlade.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/items/weapons/VampireBlade.java
+@@ -45,7 +45,7 @@ public class VampireBlade extends SimpleSlimefunItem<WeaponUseHandler> {
+             if (ThreadLocalRandom.current().nextInt(100) < getChance()) {
+                 SoundEffect.VAMPIRE_BLADE_HEALING_SOUND.playFor(p);
+                 double health = p.getHealth() + HEALING_AMOUNT;
+-                double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
++                double maxHealth = p.getAttribute(Attribute.MAX_HEALTH).getValue();
+                 p.setHealth(Math.min(health, maxHealth));
+             }
+         };

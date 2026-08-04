@@ -1,0 +1,16 @@
+﻿diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/api/MinecraftVersion.java b/src/main/java/io/github/thebusybiscuit/slimefun4/api/MinecraftVersion.java
+index afad06e3b..91b77438d 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/api/MinecraftVersion.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/api/MinecraftVersion.java
+@@ -61,6 +61,11 @@ public enum MinecraftVersion {
+      */
+     MINECRAFT_1_21(21, 0, "1.21.x"),
+ 
++    /**
++     * This constant represents Minecraft (Java Edition) Version 26
++     */
++    MINECRAFT_26(26, 0, "26.x"),
++
+     /**
+      * This constant represents an exceptional state in which we were unable
+      * to identify the Minecraft Version we are using

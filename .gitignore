@@ -1,0 +1,19 @@
+# ===== Build output =====
+target/
+dist/
+
+# ===== Local benchmark data (kept out of the repository on purpose) =====
+docs/benchmarks/
+docs/images/benchmark/
+
+# ===== Logs =====
+*.log
+
+# ===== Maven =====
+dependency-reduced-pom.xml
+
+# ===== IDE / OS =====
+.idea/
+*.iml
+.vscode/
+*.class

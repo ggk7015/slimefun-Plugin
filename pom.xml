@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!--
+        Build-time weaving (no source modification):
+
+        * The upstream Slimefun source lives in the "upstream" git submodule
+          (pinned to <upstream.version>) and is compiled UNCHANGED.
+        * Everything that makes this build different from upstream is done at
+          build time:
+            - maven-shade-plugin relocations + filters replace PaperLib and
+              dough's skins/version classes with our 26.x-compatible overlays
+              (see the "overlay/" directory).
+            - patches/ is applied by build.sh before compiling.
+        * Running "mvn package" alone builds a jar that is 1:1 upstream
+          behaviour (all languages, default config). Use "-Pslim" for the
+          optimised build (en/zh languages + tuned config.yml).
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.github.ggk7015</groupId>
+    <artifactId>slimefun-slim</artifactId>
+
+    <!-- Matches the upstream version scheme (shown by /sf versions) -->
+    <version>4.9-UNOFFICIAL</version>
+    <inceptionYear>2013</inceptionYear>
+    <packaging>jar</packaging>
+
+    <!-- Project Info -->
+    <name>Slimefun</name>
+    <description>Build-time woven Slimefun: follows the official upstream with zero source edits, optionally slimmed at build time.</description>
+    <url>https://github.com/ggk7015/slimefun-Plugin</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://github.com/Slimefun/Slimefun4/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- UTF-8 is our standard encoding for source files -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Target Java 16 (same as upstream) -->
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+        <!-- Run tests using java 21 -->
+        <maven.compiler.testSource>21</maven.compiler.testSource>
+        <maven.compiler.testTarget>21</maven.compiler.testTarget>
+
+        <!-- Fixed archive timestamp: makes builds byte-for-byte reproducible.
+             Two clean builds on the same environment produce identical jars (same SHA-256).
+             Update this per release. -->
+        <project.build.outputTimestamp>2026-08-04T00:00:00Z</project.build.outputTimestamp>
+
+        <!-- The upstream Slimefun commit this project tracks (git submodule). -->
+        <upstream.version>5374034</upstream.version>
+
+        <!-- Spigot properties -->
+        <paper.version>26.1.2.build.74-stable</paper.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>paper-repo</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>worldedit-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+        <repository>
+            <id>placeholderapi-repo</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi</url>
+        </repository>
+        <repository>
+            <id>mcmmo-repo</id>
+            <url>https://nexus.neetgames.com/repository/maven-public</url>
+        </repository>
+        <repository>
+            <id>walshy-public</id>
+            <url>https://repo.walshy.dev/public</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <!-- Upstream source is provided by the git submodule. -->
+        <sourceDirectory>${project.basedir}/upstream/src/main/java</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/upstream/src/test/java</testSourceDirectory>
+
+        <!-- The default goal for compiling is "clean package" -->
+        <defaultGoal>clean package</defaultGoal>
+
+        <!-- The name of the final jar -->
+        <finalName>Slimefun v${project.version}-MC-26.1.2</finalName>
+
+        <!-- NOTE: the bundled resources (languages + config.yml) live in the
+             "default" profile below (activeByDefault). When -Pslim is passed,
+             Maven deactivates the default profile and the slim profile's
+             resources (en/zh only + tuned config.yml) win. -->
+
+        <plugins>
+            <plugin>
+                <!-- Compiler plugin -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+
+                <configuration>
+                    <excludes>
+                        <!-- package info files are only important for Javadocs -->
+                        <!-- We can safely exclude them from the final jar -->
+                        <exclude>**/package-info.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- Adds the overlay sources (our replacements for PaperLib and dough
+                     classes) to the compilation. They are compiled together with the
+                     untouched upstream source. -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+
+                <executions>
+                    <execution>
+                        <id>add-overlay-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/overlay/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- Attach sources -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!-- Plugin for Unit Tests -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+
+                <configuration>
+                    <junitArtifactName>org.junit.jupiter:junit-jupiter</junitArtifactName>
+                    <trimStackTrace>false</trimStackTrace>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- Dependency shading -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+
+                <configuration>
+                    <!-- Match upstream: no minimizeJar. Dependencies are pruned
+                         with filters below (stale dough classes replaced by our
+                         overlay stubs, metadata files stripped). -->
+
+                    <!-- Relocate these to avoid clashes and conflicts -->
+                    <relocations>
+                        <relocation>
+                            <pattern>io.github.bakedlibs.dough</pattern>
+                            <shadedPattern>io.github.thebusybiscuit.slimefun4.libraries.dough</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.papermc.lib</pattern>
+                            <shadedPattern>io.github.thebusybiscuit.slimefun4.libraries.paperlib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache.commons.lang</pattern>
+                            <shadedPattern>io.github.thebusybiscuit.slimefun4.libraries.commons.lang</shadedPattern>
+                        </relocation>
+                    </relocations>
+
+                    <!-- Exclude unneeded metadata files from shaded dependencies -->
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*</exclude>
+                                <exclude>META-INF/maven/**</exclude>
+                            </excludes>
+                        </filter>
+                        <!--
+                            The bundled dough.skins classes rely on com.mojang.authlib.GameProfile,
+                            which is final since MC 26.x and breaks classloading (IncompatibleClassChangeError).
+                            They are replaced by our own 26.x-compatible implementations shipped
+                            under io.github.thebusybiscuit.slimefun4.libraries.dough.skins.
+                        -->
+                        <filter>
+                            <artifact>com.github.Slimefun.dough:dough-api</artifact>
+                            <excludes>
+                                <exclude>io/github/bakedlibs/dough/skins/**</exclude>
+                                <!-- The bundled dough MinecraftVersion can not parse the "26.1.2.build.2592-stable" format. -->
+                                <exclude>io/github/bakedlibs/dough/versions/MinecraftVersion.class</exclude>
+                                <exclude>io/github/bakedlibs/dough/versions/UnknownServerVersionException.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.11.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Development dependencies -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--
+            PaperLib is only needed to COMPILE the untouched upstream source.
+            It is never bundled: at shade time its byte-code references are
+            relocated to ...slimefun4.libraries.paperlib, which is provided by
+            our overlay stub. (compile-time only)
+        -->
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Shaded packages -->
+        <dependency>
+            <groupId>com.github.Slimefun.dough</groupId>
+            <artifactId>dough-api</artifactId>
+            <version>cb22e71335</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Paper -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Testing dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.15.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.16</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- This needs to be before Spigot because MockBukkit will fail otherwise. -->
+        <dependency>
+            <groupId>com.github.seeseemelk</groupId>
+            <artifactId>MockBukkit-v1.21</artifactId>
+            <version>3.133.2</version>
+            <scope>test</scope>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Third party plugin integrations / soft dependencies -->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>7.3.9</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>7.3.9</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>2.2.029</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>me.minebuilders</groupId>
+            <artifactId>clearlag-core</artifactId>
+            <version>3.1.6</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>itemsadder-api</artifactId>
+            <version>3.6.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.imprex</groupId>
+            <artifactId>orebfuscator-api</artifactId>
+            <version>5.4.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>6.0.52</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <!--
+        Two mutually exclusive resource profiles:
+
+        * "default" (activeByDefault): 1:1 upstream parity - all languages,
+          upstream config.yml. This is what a plain "mvn package" builds.
+        * "slim" (activated with -Pslim): only en/zh translations plus a tuned
+          config.yml (auto-update off, analytics off, larger ticker delays).
+
+        Because Maven deactivates activeByDefault profiles as soon as any other
+        profile is activated, exactly one of the two is ever active.
+        Usage:  mvn -Dmaven.test.skip=true clean package [-Pslim]
+    -->
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <build>
+                <resources>
+                    <!-- Upstream resources: full parity (all languages, upstream defaults). -->
+                    <resource>
+                        <directory>${project.basedir}/upstream/src/main/resources</directory>
+                        <filtering>true</filtering>
+
+                        <includes>
+                            <include>plugin.yml</include>
+                            <include>config.yml</include>
+                            <include>item-models.yml</include>
+
+                            <include>wiki.json</include>
+                            <include>languages/translators.json</include>
+
+                            <include>tags/*.json</include>
+                            <include>biome-maps/*.json</include>
+
+                            <include>languages/**/*.yml</include>
+                        </includes>
+                    </resource>
+
+                    <!-- We also want to include our LICENSE file -->
+                    <resource>
+                        <directory>${project.basedir}</directory>
+                        <filtering>false</filtering>
+
+                        <includes>
+                            <include>LICENSE</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+
+        <profile>
+            <id>slim</id>
+
+            <build>
+                <finalName>Slimefun v${project.version}-slim-MC-26.1.2</finalName>
+
+                <resources>
+                    <!-- Slim build: only bundle the most relevant translations. -->
+                    <resource>
+                        <directory>${project.basedir}/upstream/src/main/resources</directory>
+                        <filtering>true</filtering>
+
+                        <includes>
+                            <include>plugin.yml</include>
+                            <include>config.yml</include>
+                            <include>item-models.yml</include>
+
+                            <include>wiki.json</include>
+                            <include>languages/translators.json</include>
+
+                            <include>tags/*.json</include>
+                            <include>biome-maps/*.json</include>
+
+                            <include>languages/en/**/*.yml</include>
+                            <include>languages/zh-CN/**/*.yml</include>
+                            <include>languages/zh-TW/**/*.yml</include>
+                            <include>languages/zh/**/*.yml</include>
+                        </includes>
+                    </resource>
+
+                    <!-- Tuned config.yml. Declared AFTER the upstream resource (above)
+                         so it wins when both map to the same relative path. -->
+                    <resource>
+                        <directory>${project.basedir}/slim/src/main/resources</directory>
+                        <filtering>false</filtering>
+                    </resource>
+
+                    <!-- We also want to include our LICENSE file -->
+                    <resource>
+                        <directory>${project.basedir}</directory>
+                        <filtering>false</filtering>
+
+                        <includes>
+                            <include>LICENSE</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+</project>

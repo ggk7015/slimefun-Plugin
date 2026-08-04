@@ -1,0 +1,8 @@
+# Patch files MUST stay LF: git apply fails on CRLF patches.
+*.patch text eol=lf
+
+# Shell scripts stay LF so they work in CI / Git Bash.
+*.sh text eol=lf
+
+# Windows batch files stay CRLF.
+*.bat text eol=crlf
