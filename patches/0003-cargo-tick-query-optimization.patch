@@ -1,0 +1,159 @@
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNet.java b/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNet.java
+index 7ef1da5cd..1f6ffab94 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNet.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNet.java
+@@ -5,6 +5,7 @@ import java.util.HashSet;
+ import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Objects;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.logging.Level;
+@@ -47,6 +48,25 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+     private final Set<Location> inputNodes = new HashSet<>();
+     private final Set<Location> outputNodes = new HashSet<>();
+ 
++    /**
++     * This is a cache for the {@code frequency} value of every node.
++     * The {@code frequency} of a node only changes when a player reconfigures it
++     * through the cargo node GUI, which triggers {@link #markCargoNodeConfigurationDirty(Location)}.
++     * Caching it here avoids a {@link BlockStorage} lookup + regex parse for every
++     * node on every cargo tick.
++     */
++    private final Map<Location, Integer> frequencyCache = new HashMap<>();
++
++    /**
++     * This is a cache for the per-node {@code round-robin} and {@code smart-fill}
++     * flags of input nodes. These flags only change when a player reconfigures the
++     * node through its GUI, which triggers {@link #markCargoNodeConfigurationDirty(Location)}.
++     * Caching them avoids two {@link BlockStorage} lookups for every input node
++     * on every cargo tick.
++     */
++    private final Map<Location, Boolean> roundRobinCache = new HashMap<>();
++    private final Map<Location, Boolean> smartFillCache = new HashMap<>();
++
+     protected final Map<Location, Integer> roundRobin = new HashMap<>();
+     private int tickDelayThreshold = 0;
+ 
+@@ -107,6 +127,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+     @Override
+     public void onClassificationChange(Location l, NetworkComponent from, NetworkComponent to) {
+         connectorCache.remove(l);
++        frequencyCache.remove(l);
+ 
+         if (from == NetworkComponent.TERMINUS) {
+             inputNodes.remove(l);
+@@ -165,7 +186,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+         Map<Location, Integer> inputs = new HashMap<>();
+ 
+         for (Location node : inputNodes) {
+-            int frequency = getFrequency(node);
++            int frequency = getCachedFrequency(node);
+ 
+             if (frequency >= 0 && frequency < 16) {
+                 inputs.put(node, frequency);
+@@ -182,7 +203,7 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+         int lastFrequency = -1;
+ 
+         for (Location node : outputNodes) {
+-            int frequency = getFrequency(node);
++            int frequency = getCachedFrequency(node);
+ 
+             if (frequency != lastFrequency && lastFrequency != -1) {
+                 output.merge(lastFrequency, list, (prev, next) -> {
+@@ -207,6 +228,20 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+         return output;
+     }
+ 
++    /**
++     * This returns the {@code frequency} of the given node, using the internal cache.
++     * The cache is invalidated whenever a node's configuration changes
++     * (see {@link #markCargoNodeConfigurationDirty(Location)}) or its classification changes.
++     *
++     * @param node
++     *            The {@link Location} of the cargo node
++     *
++     * @return The frequency of the given node
++     */
++    private int getCachedFrequency(@Nonnull Location node) {
++        return frequencyCache.computeIfAbsent(node, CargoNet::getFrequency);
++    }
++
+     /**
+      * This method returns the frequency a given node is set to.
+      * Should there be invalid data this method it will fall back to zero in
+@@ -229,4 +264,40 @@ public class CargoNet extends AbstractItemNetwork implements HologramOwner {
+             return Integer.parseInt(frequency);
+         }
+     }
++
++    /**
++     * This returns whether the given input node has Round-Robin mode enabled,
++     * using the internal cache. The cache is invalidated when the node's
++     * configuration changes (see {@link #markCargoNodeConfigurationDirty(Location)}).
++     *
++     * @param node
++     *            The {@link Location} of the cargo input node
++     *
++     * @return Whether Round-Robin mode is enabled for the given node
++     */
++    boolean isRoundRobinEnabled(@Nonnull Location node) {
++        return roundRobinCache.computeIfAbsent(node, l -> Objects.equals(BlockStorage.getLocationInfo(l, "round-robin"), "true"));
++    }
++
++    /**
++     * This returns whether the given input node has Smart-Filling mode enabled,
++     * using the internal cache. The cache is invalidated when the node's
++     * configuration changes (see {@link #markCargoNodeConfigurationDirty(Location)}).
++     *
++     * @param node
++     *            The {@link Location} of the cargo input node
++     *
++     * @return Whether Smart-Filling mode is enabled for the given node
++     */
++    boolean isSmartFillEnabled(@Nonnull Location node) {
++        return smartFillCache.computeIfAbsent(node, l -> Objects.equals(BlockStorage.getLocationInfo(l, "smart-fill"), "true"));
++    }
++
++    @Override
++    public void markCargoNodeConfigurationDirty(@Nonnull Location node) {
++        super.markCargoNodeConfigurationDirty(node);
++        frequencyCache.remove(node);
++        roundRobinCache.remove(node);
++        smartFillCache.remove(node);
++    }
+ }
+diff --git a/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNetworkTask.java b/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNetworkTask.java
+index 35b5fe225..3aa3761b9 100644
+--- a/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNetworkTask.java
++++ b/src/main/java/io/github/thebusybiscuit/slimefun4/core/networks/cargo/CargoNetworkTask.java
+@@ -7,7 +7,6 @@ import java.util.Deque;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+-import java.util.Objects;
+ import java.util.Optional;
+ import java.util.logging.Level;
+ 
+@@ -28,8 +27,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
+ import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+ import io.github.thebusybiscuit.slimefun4.utils.itemstack.ItemStackWrapper;
+ 
+-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+-import me.mrCookieSlime.Slimefun.api.BlockStorage;
+ import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
+ 
+ /**
+@@ -147,9 +144,8 @@ class CargoNetworkTask implements Runnable {
+     private ItemStack distributeItem(ItemStack stack, Location inputNode, List<Location> outputNodes) {
+         ItemStack item = stack;
+ 
+-        Config cfg = BlockStorage.getLocationInfo(inputNode);
+-        boolean roundrobin = Objects.equals(cfg.getString("round-robin"), "true");
+-        boolean smartFill = Objects.equals(cfg.getString("smart-fill"), "true");
++        boolean roundrobin = network.isRoundRobinEnabled(inputNode);
++        boolean smartFill = network.isSmartFillEnabled(inputNode);
+ 
+         int index = 0;
+         Collection<Location> destinations;

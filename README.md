@@ -95,6 +95,17 @@ dist/       build output (git-ignored)
 More: [docs/WEAVING.md](docs/WEAVING.md) (how the weaving works), 
 [docs/UPDATING.md](docs/UPDATING.md) (how to track a new upstream version).
 
+## Benchmarks
+
+| Report | What it measures | Result |
+|---|---|---|
+| [docs/benchmarks/benchmark.md](docs/benchmarks/benchmark.md) | TPS / MSPT / CPU vs load (slim vs bare server) | no material tick degradation; +5.8 s boot, +52 MB boot peak |
+| [docs/benchmarks/memory-benchmark.md](docs/benchmarks/memory-benchmark.md) | Memory (RSS / HWM / cgroup) at identical `-Xmx8000M` | **−32.7% RSS (−613 MB)** vs old fork; **−73% boot time** |
+
+Chart preview (full set in `docs/benchmarks/memory-benchmark.md`):
+
+![Working set](docs/images/benchmark/memory-rss-hwm.png)
+
 ## JVM tuning
 
 `start.sh` / `start.bat` are templates with the G1GC flags used during load

@@ -2,10 +2,6 @@
 target/
 dist/
 
-# ===== Local benchmark data (kept out of the repository on purpose) =====
-docs/benchmarks/
-docs/images/benchmark/
-
 # ===== Logs =====
 *.log
 

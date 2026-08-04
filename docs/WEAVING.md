@@ -38,6 +38,7 @@ patches:
 |-------|-----------|
 | `0001-add-minecraft-26.patch` | Add the `MINECRAFT_26(26, 0, "26.x")` enum constant, so `MinecraftVersion` recognises MC 26 servers. |
 | `0002-attribute-max-health.patch` | `Attribute.GENERIC_MAX_HEALTH` was renamed to `Attribute.MAX_HEALTH` in MC 26 (Bandage, MedicalSupply, Splint, VampireBlade). |
+| `0003-cargo-tick-query-optimization.patch` | Cache cargo network config lookups (`CargoNet` frequency/round-robin/smart-fill + `CargoNetworkTask.distributeItem`), cutting per-node-per-tick `BlockStorage` queries. No behaviour change. |
 
 To add a patch: edit the file inside `upstream/`, run
 `git -C upstream diff > patches/000N-my-change.patch`, then

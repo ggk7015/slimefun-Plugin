@@ -1,0 +1,29 @@
+{
+  "label": "fullslim",
+  "mode": "slim",
+  "levels": [
+    0,
+    100,
+    150,
+    200,
+    250,
+    300,
+    350,
+    400,
+    500
+  ],
+  "settle": 15,
+  "repeats": 3,
+  "java": "/usr/bin/java",
+  "flags": [
+    "-Xms256M",
+    "-Xmx1G",
+    "-XX:+UseG1GC",
+    "-XX:MaxMetaspaceSize=192M",
+    "-XX:MaxDirectMemorySize=256M",
+    "-XX:ReservedCodeCacheSize=64M",
+    "-Dfile.encoding=UTF-8"
+  ],
+  "server_dir": "/crafty/servers/d72d076e-9f5f-4103-b157-7344988cbd73",
+  "ts": "2026-08-04T00:51:58Z"
+}
